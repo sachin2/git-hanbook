@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# pre-push: refuse direct pushes to protected branches and warn on WIP commits.
+# Server-side branch protection is the real safeguard; this is a local seatbelt.
+set -euo pipefail
+
+PROTECTED_RE='^refs/heads/(main|master|release/.*)$'
+zero=0000000000000000000000000000000000000000
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "$zero" ] && continue          # branch deletion
+
+  if [[ "$remote_ref" =~ $PROTECTED_RE ]] && [ "${ALLOW_PROTECTED_PUSH:-0}" != "1" ]; then
+    echo "✖ Direct push to ${remote_ref#refs/heads/} blocked. Open a pull request."
+    echo "  (override once: ALLOW_PROTECTED_PUSH=1 git push …)"
+    exit 1
+  fi
+
+  if [ "$remote_sha" = "$zero" ]; then range="$local_sha"; else range="$remote_sha..$local_sha"; fi
+  if git log --format=%s "$range" 2>/dev/null | grep -qE '^(WIP|fixup!|squash!)'; then
+    echo "⚠ Pushing WIP/fixup commits to ${remote_ref#refs/heads/} — remember to autosquash before merge."
+  fi
+done
+exit 0

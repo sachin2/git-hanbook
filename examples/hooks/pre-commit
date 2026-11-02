@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# pre-commit: block common mistakes before they enter history.
+# Install for one repo:   cp examples/hooks/* .git/hooks/ && chmod +x .git/hooks/*
+# Share with the team:    git config core.hooksPath .githooks   (commit the hooks there)
+# Bypass once:            git commit --no-verify
+set -euo pipefail
+
+MAX_KB=${GIT_MAX_FILE_KB:-5120}   # 5 MB default
+fail=0
+
+# Files being added/modified in this commit (NUL-safe)
+mapfile -d '' files < <(git diff --cached --name-only --diff-filter=ACM -z)
+
+for f in "${files[@]}"; do
+  [ -f "$f" ] || continue
+
+  # 1. Large files
+  size_kb=$(( $(wc -c < "$f") / 1024 ))
+  if [ "$size_kb" -gt "$MAX_KB" ]; then
+    echo "✖ $f is ${size_kb} KB (> ${MAX_KB} KB). Use Git LFS or an artefact store."
+    fail=1
+  fi
+
+  # 2. Leftover conflict markers (text files only)
+  if git diff --cached --no-color -- "$f" | grep -qE '^\+(<{7} |>{7} |={7}$)'; then
+    echo "✖ $f contains conflict markers."
+    fail=1
+  fi
+
+  # 3. Likely secrets
+  if git diff --cached --no-color -- "$f" | grep -qiE '^\+.*(-----BEGIN (RSA|OPENSSH|EC|PGP) PRIVATE KEY|aws_secret_access_key|ghp_[A-Za-z0-9]{36}|xox[baprs]-)'; then
+    echo "✖ $f looks like it contains a secret/private key."
+    fail=1
+  fi
+done
+
+# 4. Whitespace errors (trailing spaces, space-before-tab)
+if ! git diff --cached --check >/dev/null; then
+  echo "✖ Whitespace errors:"
+  git diff --cached --check || true
+  fail=1
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo
+  echo "Commit aborted by pre-commit hook. Fix the issues above or use --no-verify if you are sure."
+  exit 1
+fi

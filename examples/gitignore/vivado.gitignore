@@ -1,0 +1,58 @@
+# Xilinx / AMD Vivado — keep sources + recreate scripts, ignore generated state
+
+# Project run / cache directories
+*.cache/
+*.hw/
+*.runs/
+*.sim/
+*.ip_user_files/
+*.gen/
+*.srcs/**/ip/*/sim/
+*.srcs/**/ip/*/synth/
+*.srcs/**/bd/*/ip/
+*.srcs/**/bd/*/hdl/
+*.srcs/**/bd/*/sim/
+*.srcs/**/bd/*/synth/
+.Xil/
+.hbs/
+xsim.dir/
+webtalk*
+NA/
+
+# Logs & journals
+*.log
+*.jou
+*.str
+*.backup.*
+vivado_pid*.zip
+vivado_pid*.str
+usage_statistics_webtalk.*
+
+# Checkpoints, bitstreams, hardware handoff (release artefacts / LFS instead)
+*.dcp
+*.bit
+*.bin
+*.mcs
+*.prm
+*.ltx
+*.xsa
+*.hdf
+
+# Waveforms
+*.wdb
+*.vcd
+*.fst
+*.wcfg.bak
+
+# Vitis / SDK workspace metadata
+.metadata/
+.analytics
+RemoteSystemsTempFiles/
+**/Debug/
+**/Release/
+_ide/
+
+# Out-of-tree build directory (recommended layout)
+build/
+
+# Keep: *.v *.sv *.vhd *.xdc *.xci *.tcl (recreate scripts, write_bd_tcl output)

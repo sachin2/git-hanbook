@@ -1,0 +1,26 @@
+# Personal global ignore file — NOT for project repos.
+# Install: cp global.gitignore ~/.gitignore_global
+#          git config --global core.excludesFile ~/.gitignore_global
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+.directory
+
+# Editors / IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+.*.sw?
+*.sublime-workspace
+.project
+.settings/
+
+# Local env / secrets (projects should also ignore these)
+.env
+.env.local
+*.pem
+*.key

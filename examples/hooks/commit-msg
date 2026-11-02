@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# commit-msg: enforce a readable subject line.
+#  - subject not empty, <= 72 chars, no trailing period
+#  - blank line between subject and body
+# Set COMMIT_MSG_CONVENTIONAL=1 to also require Conventional Commits (feat:, fix(scope): …)
+set -euo pipefail
+
+msg_file="$1"
+# ignore comment lines
+subject=$(grep -v '^#' "$msg_file" | sed -n '1p')
+second=$(grep -v '^#' "$msg_file" | sed -n '2p')
+
+# Let fixup!/squash!/Merge/Revert through untouched
+if [[ "$subject" =~ ^(fixup!|squash!|amend!|Merge|Revert) ]]; then exit 0; fi
+
+err() { echo "✖ commit-msg: $1"; exit 1; }
+
+[ -n "$subject" ]                       || err "empty subject line"
+[ "${#subject}" -le 72 ]                || err "subject is ${#subject} chars (max 72)"
+[[ "$subject" != *. ]]                  || err "subject should not end with a period"
+[ -z "$second" ]                        || err "leave a blank line between subject and body"
+
+if [ "${COMMIT_MSG_CONVENTIONAL:-0}" = "1" ]; then
+  re='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9._/-]+\))?!?: .+'
+  [[ "$subject" =~ $re ]] || err "subject must follow Conventional Commits, e.g. 'fix(fifo): assert full one cycle earlier'"
+fi

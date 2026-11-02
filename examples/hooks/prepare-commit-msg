@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# prepare-commit-msg: prefix the message with a ticket ID taken from the branch name.
+# Branch "feat/AXI-42-burst-support" → message starts with "[AXI-42] ".
+set -euo pipefail
+
+msg_file="$1"
+source="${2:-}"
+
+# Only for fresh messages (not merges, amends, -m with existing ticket, etc.)
+case "$source" in merge|squash|commit) exit 0 ;; esac
+
+branch=$(git branch --show-current 2>/dev/null || true)
+ticket=$(echo "$branch" | grep -oE '[A-Z][A-Z0-9]+-[0-9]+' | head -1 || true)
+[ -z "$ticket" ] && exit 0
+
+if ! grep -q "\[$ticket\]" "$msg_file"; then
+  sed -i.bak "1s/^/[$ticket] /" "$msg_file" && rm -f "$msg_file.bak"
+fi

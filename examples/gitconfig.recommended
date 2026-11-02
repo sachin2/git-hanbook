@@ -1,0 +1,77 @@
+# Recommended Git configuration.
+# Include from ~/.gitconfig:
+#   git config --global include.path /path/to/git-handbook/examples/gitconfig.recommended
+# Your own ~/.gitconfig entries after the include override these.
+# Identity (user.name / user.email) intentionally NOT set here.
+
+[init]
+    defaultBranch = main
+
+[core]
+    # editor = code --wait
+    autocrlf = input            # Windows users: set to true in ~/.gitconfig instead
+    untrackedCache = true
+    excludesFile = ~/.gitignore_global
+
+[pull]
+    rebase = true
+
+[push]
+    default = simple
+    autoSetupRemote = true      # Git >= 2.37
+    followTags = true
+
+[fetch]
+    prune = true
+    pruneTags = true
+
+[rebase]
+    autoStash = true
+    autoSquash = true
+    updateRefs = true           # Git >= 2.38
+
+[merge]
+    conflictStyle = zdiff3      # Git >= 2.35 (use diff3 on older Git)
+
+[rerere]
+    enabled = true
+    autoUpdate = true
+
+[diff]
+    algorithm = histogram
+    colorMoved = zebra
+    mnemonicPrefix = true
+    renames = copies
+
+[commit]
+    verbose = true
+
+[branch]
+    sort = -committerdate
+
+[tag]
+    sort = version:refname
+
+[help]
+    autocorrect = prompt
+
+[transfer]
+    fsckObjects = true
+
+[alias]
+    st      = status -sb
+    sw      = switch
+    br      = branch -vv --sort=-committerdate
+    lg      = log --graph --pretty=format:'%C(yellow)%h%C(reset) %C(blue)%ad%C(reset) %s%C(auto)%d%C(reset) %C(dim)[%an]' --date=short
+    lga     = !git lg --all
+    last    = log -1 HEAD --stat
+    unstage = restore --staged
+    amend   = commit --amend --no-edit
+    fixup   = commit --fixup
+    pushf   = push --force-with-lease --force-if-includes
+    up      = pull --rebase --autostash
+    undo    = reset --soft HEAD~1
+    ahead   = log --oneline @{u}..
+    behind  = log --oneline ..@{u}
+    aliases = config --get-regexp ^alias\\.
+    root    = rev-parse --show-toplevel

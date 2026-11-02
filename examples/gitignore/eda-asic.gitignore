@@ -1,0 +1,76 @@
+# ASIC / analog / open-source EDA flows
+
+# Simulation
+*.vcd
+*.fst
+*.fsdb
+*.vpd
+*.shm/
+*.trn
+*.dsn
+waves/
+# cocotb
+sim_build/
+# Verilator
+obj_dir/
+work/
+xcelium.d/
+INCA_libs/
+csrc/
+simv
+simv.daidir/
+ucli.key
+*.vdb
+results.xml
+__pycache__/
+
+# Synthesis / P&R flow outputs (keep configs, summarise metrics in Markdown)
+runs/
+results/
+reports/
+objects/
+logs/
+tmp/
+*.log
+*.rpt
+
+# OpenLane / OpenROAD / Yosys
+openlane_run/
+*.odb
+*.def.bak
+
+# Cadence Virtuoso / Spectre
+*.cdslck
+*.cdslck.*
+CDS.log*
+panic.log*
+.cadence/
+libManager.log*
+*.raw
+psf/
+simulation/
+.abstract/
+
+# Synopsys
+alib-52/
+command.log
+default.svf
+*.svf
+*.mr
+*.syn
+*.pvl
+
+# Calibre / physical verification
+*.drc.results
+*.lvs.report.ext
+svdb/
+
+# PDKs — never commit (NDA / install via package manager)
+pdk/
+PDK/
+*.pdk
+
+# Large layout artefacts → LFS or artefact store
+*.gds
+*.gds.gz
+*.oas

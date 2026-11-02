@@ -1,0 +1,25 @@
+# Intel / Altera Quartus — keep .qpf .qsf .sdc .qsys/.ip and HDL
+
+db/
+incremental_db/
+output_files/
+simulation/
+greybox_tmp/
+hc_output/
+qdb/
+dni/
+tmp-clearbox/
+*.qws
+*.rpt
+*.summary
+*.smsg
+*.done
+*.pin
+*.sof
+*.pof
+*.jdi
+*.sld
+*_assignment_defaults.qdf
+c5_pin_model_dump.txt
+.qsys_edit/
+*.log
